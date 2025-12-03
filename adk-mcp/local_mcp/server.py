@@ -37,3 +37,34 @@ def get_db_connection():
     conn = sqlite3.connect(DATABASE_PATH)
     conn.row_factory = sqlite3.Row  # To access columns by name
     return conn
+
+
+def list_db_tables(dummy_param: str) -> dict:
+    """Lists all tables in the SQLite database.
+
+    Args:
+        dummy_param (str): This parameter is not used by the function
+                           but helps ensure schema generation. A non-empty string is expected.
+    Returns:
+        dict: A dictionary with keys 'success' (bool), 'message' (str),
+              and 'tables' (list[str]) containing the table names if successful.
+    """
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        return {
+            "success": True,
+            "message": "Tables listed successfully.",
+            "tables": tables,
+        }
+    except sqlite3.Error as e:
+        return {"success": False, "message": f"Error listing tables: {e}", "tables": []}
+    except Exception as e:  # Catch any other unexpected errors
+        return {
+            "success": False,
+            "message": f"An unexpected error occurred while listing tables: {e}",
+            "tables": [],
+        }
