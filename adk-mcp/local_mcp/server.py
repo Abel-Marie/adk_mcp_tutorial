@@ -152,3 +152,45 @@ def insert_data(table_name: str, data: dict) -> dict:
         }
     finally:
         conn.close()
+
+
+def delete_data(table_name: str, condition: str) -> dict:
+    """Deletes rows from a table based on a given SQL WHERE clause condition.
+
+    Args:
+        table_name (str): The name of the table to delete data from.
+        condition (str): The SQL WHERE clause condition to specify which rows to delete.
+                         This condition MUST NOT be empty to prevent accidental mass deletion.
+
+    Returns:
+        dict: A dictionary with keys 'success' (bool) and 'message' (str).
+              If successful, 'message' includes the count of deleted rows.
+    """
+    if not condition or not condition.strip():
+        return {
+            "success": False,
+            "message": "Deletion condition cannot be empty. This is a safety measure to prevent accidental deletion of all rows.",
+        }
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    query = f"DELETE FROM {table_name} WHERE {condition}"
+
+    try:
+        cursor.execute(query)
+        rows_deleted = cursor.rowcount
+        conn.commit()
+        return {
+            "success": True,
+            "message": f"{rows_deleted} row(s) deleted successfully from table '{table_name}'.",
+            "rows_deleted": rows_deleted,
+        }
+    except sqlite3.Error as e:
+        conn.rollback()
+        return {
+            "success": False,
+            "message": f"Error deleting data from table '{table_name}': {e}",
+        }
+    finally:
+        conn.close()
