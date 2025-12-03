@@ -17,3 +17,14 @@ from mcp.server.lowlevel import NotificationOptions, Server
 from mcp.server.models import InitializationOptions
 
 load_dotenv()
+
+
+# --- Logging Setup ---
+LOG_FILE_PATH = os.path.join(os.path.dirname(__file__), "mcp_server_activity.log")
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE_PATH, mode="w"),
+    ],
+)
