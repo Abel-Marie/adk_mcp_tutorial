@@ -229,3 +229,46 @@ async def list_mcp_tools() -> list[mcp_types.Tool]:
         )
         mcp_tools_list.append(mcp_tool_schema)
     return mcp_tools_list
+
+
+@app.call_tool()
+async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.TextContent]:
+    """MCP handler to execute a tool call requested by an MCP client."""
+    logging.info(
+        f"MCP Server: Received call_tool request for '{name}' with args: {arguments}"
+    )  # Changed print to logging.info
+
+    if name in ADK_DB_TOOLS:
+        adk_tool_instance = ADK_DB_TOOLS[name]
+        try:
+            adk_tool_response = await adk_tool_instance.run_async(
+                args=arguments,
+                tool_context=None,  # type: ignore
+            )
+            logging.info(  # Changed print to logging.info
+                f"MCP Server: ADK tool '{name}' executed. Response: {adk_tool_response}"
+            )
+            response_text = json.dumps(adk_tool_response, indent=2)
+            return [mcp_types.TextContent(type="text", text=response_text)]
+
+        except Exception as e:
+            logging.error(
+                f"MCP Server: Error executing ADK tool '{name}': {e}", exc_info=True
+            )  # Changed print to logging.error, added exc_info
+            error_payload = {
+                "success": False,
+                "message": f"Failed to execute tool '{name}': {str(e)}",
+            }
+            error_text = json.dumps(error_payload)
+            return [mcp_types.TextContent(type="text", text=error_text)]
+    else:
+        logging.warning(
+            f"MCP Server: Tool '{name}' not found/exposed by this server."
+        )  # Changed print to logging.warning
+        error_payload = {
+            "success": False,
+            "message": f"Tool '{name}' not implemented by this server.",
+        }
+        error_text = json.dumps(error_payload)
+        return [mcp_types.TextContent(type="text", text=error_text)]
+
