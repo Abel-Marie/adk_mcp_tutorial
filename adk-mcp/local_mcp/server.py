@@ -1,10 +1,10 @@
 import asyncio
 import json
-import logging 
+import logging  # Added logging
 import os
-import sqlite3  
+import sqlite3  # For database operations
 
-import mcp.server.stdio  
+import mcp.server.stdio  # For running as a stdio server
 from dotenv import load_dotenv
 
 # ADK Tool Imports
@@ -12,12 +12,11 @@ from google.adk.tools.function_tool import FunctionTool
 from google.adk.tools.mcp_tool.conversion_utils import adk_to_mcp_tool_type
 
 # MCP Server Imports
-from mcp import types as mcp_types  
+from mcp import types as mcp_types  # Use alias to avoid conflict
 from mcp.server.lowlevel import NotificationOptions, Server
 from mcp.server.models import InitializationOptions
 
 load_dotenv()
-
 
 # --- Logging Setup ---
 LOG_FILE_PATH = os.path.join(os.path.dirname(__file__), "mcp_server_activity.log")
@@ -28,6 +27,7 @@ logging.basicConfig(
         logging.FileHandler(LOG_FILE_PATH, mode="w"),
     ],
 )
+# --- End Logging Setup ---
 
 DATABASE_PATH = os.path.join(os.path.dirname(__file__), "database.db")
 
@@ -199,7 +199,7 @@ def delete_data(table_name: str, condition: str) -> dict:
 # --- MCP Server Setup ---
 logging.info(
     "Creating MCP Server instance for SQLite DB..."
-)  
+)  # Changed print to logging.info
 app = Server("sqlite-db-mcp-server")
 
 # Wrap database utility functions as ADK FunctionTools
@@ -273,7 +273,7 @@ async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.TextConten
         return [mcp_types.TextContent(type="text", text=error_text)]
 
 
-# -- MCP Server Runner ---
+# --- MCP Server Runner ---
 async def run_mcp_stdio_server():
     """Runs the MCP server, listening for connections over standard input/output."""
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
@@ -306,3 +306,12 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         logging.info(
             "\nMCP Server (stdio) stopped by user."
+        )  # Changed print to logging.info
+    except Exception as e:
+        logging.critical(
+            f"MCP Server (stdio) encountered an unhandled error: {e}", exc_info=True
+        )  # Changed print to logging.critical, added exc_info
+    finally:
+        logging.info(
+            "MCP Server (stdio) process exiting."
+        )  # Changed print to logging.info
