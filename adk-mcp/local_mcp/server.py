@@ -295,3 +295,14 @@ async def run_mcp_stdio_server():
         logging.info(
             "MCP Stdio Server: Run loop finished or client disconnected."
         )  # Changed print to logging.info
+
+
+if __name__ == "__main__":
+    logging.info(
+        "Launching SQLite DB MCP Server via stdio..."
+    )  # Changed print to logging.info
+    try:
+        asyncio.run(run_mcp_stdio_server())
+    except KeyboardInterrupt:
+        logging.info(
+            "\nMCP Server (stdio) stopped by user."
