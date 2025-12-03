@@ -68,3 +68,17 @@ def list_db_tables(dummy_param: str) -> dict:
             "message": f"An unexpected error occurred while listing tables: {e}",
             "tables": [],
         }
+
+
+def get_table_schema(table_name: str) -> dict:
+    """Gets the schema (column names and types) of a specific table."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(f"PRAGMA table_info('{table_name}');")  # Use PRAGMA for schema
+    schema_info = cursor.fetchall()
+    conn.close()
+    if not schema_info:
+        raise ValueError(f"Table '{table_name}' not found or no schema information.")
+
+    columns = [{"name": row["name"], "type": row["type"]} for row in schema_info]
+    return {"table_name": table_name, "columns": columns}
