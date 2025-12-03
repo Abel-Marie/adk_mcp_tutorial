@@ -1,0 +1,135 @@
+// ...existing code...
+# Compiled files
+*.class
+
+# Packages
+*.jar
+*.war
+*.ear
+*.zip
+
+# Build directories
+/build/
+/out/
+/target/
+/dist/
+/bin/
+/generated/
+
+# Gradle
+.gradle/
+build/
+
+# Maven
+.mvn/
+
+# IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.project
+.classpath
+.settings/
+
+# MCP / Minecraft development artifacts
+/mcp/
+/mcp_conf/
+/runtime/
+/natives/
+/libs/
+/minecraft/
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temp files
+tmp/
+temp/
+*.tmp
+*.swp
+
+# Local config / secrets
+local.properties
+secrets.properties
+*.keystore
+.env
+
+# Node / Python (if present)
+node_modules/
+
+# End
+// ...existing code...
+```// filepath: c:\Users\Y\Desktop\adk_mcp_tutorial\adk-mcp\.gitignore
+// ...existing code...
+# Compiled files
+*.class
+
+# Packages
+*.jar
+*.war
+*.ear
+*.zip
+
+# Build directories
+/build/
+/out/
+/target/
+/dist/
+/bin/
+/generated/
+
+# Gradle
+.gradle/
+build/
+
+# Maven
+.mvn/
+
+# IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.project
+.classpath
+.settings/
+
+# MCP / Minecraft development artifacts
+/mcp/
+/mcp_conf/
+/runtime/
+/natives/
+/libs/
+/minecraft/
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temp files
+tmp/
+temp/
+*.tmp
+*.swp
+
+# Local config / secrets
+local.properties
+secrets.properties
+*.keystore
+.env
+
+# Node / Python (if present)
+node_modules/
+
+# End
+// ...existing code...
