@@ -194,3 +194,19 @@ def delete_data(table_name: str, condition: str) -> dict:
         }
     finally:
         conn.close()
+
+
+# --- MCP Server Setup ---
+logging.info(
+    "Creating MCP Server instance for SQLite DB..."
+)  
+app = Server("sqlite-db-mcp-server")
+
+# Wrap database utility functions as ADK FunctionTools
+ADK_DB_TOOLS = {
+    "list_db_tables": FunctionTool(func=list_db_tables),
+    "get_table_schema": FunctionTool(func=get_table_schema),
+    "query_db_table": FunctionTool(func=query_db_table),
+    "insert_data": FunctionTool(func=insert_data),
+    "delete_data": FunctionTool(func=delete_data),
+}
