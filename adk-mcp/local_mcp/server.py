@@ -210,3 +210,22 @@ ADK_DB_TOOLS = {
     "insert_data": FunctionTool(func=insert_data),
     "delete_data": FunctionTool(func=delete_data),
 }
+
+
+@app.list_tools()
+async def list_mcp_tools() -> list[mcp_types.Tool]:
+    """MCP handler to list tools this server exposes."""
+    logging.info(
+        "MCP Server: Received list_tools request."
+    )  # Changed print to logging.info
+    mcp_tools_list = []
+    for tool_name, adk_tool_instance in ADK_DB_TOOLS.items():
+        if not adk_tool_instance.name:
+            adk_tool_instance.name = tool_name
+
+        mcp_tool_schema = adk_to_mcp_tool_type(adk_tool_instance)
+        logging.info(  # Changed print to logging.info
+            f"MCP Server: Advertising tool: {mcp_tool_schema.name}, InputSchema: {mcp_tool_schema.inputSchema}"
+        )
+        mcp_tools_list.append(mcp_tool_schema)
+    return mcp_tools_list
