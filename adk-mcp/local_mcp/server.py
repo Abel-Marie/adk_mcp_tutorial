@@ -109,3 +109,46 @@ def query_db_table(table_name: str, columns: str, condition: str) -> list[dict]:
         raise ValueError(f"Error querying table '{table_name}': {e}")
     conn.close()
     return results
+
+
+def insert_data(table_name: str, data: dict) -> dict:
+    """Inserts a new row of data into the specified table.
+
+    Args:
+        table_name (str): The name of the table to insert data into.
+        data (dict): A dictionary where keys are column names and values are the
+                     corresponding values for the new row.
+
+    Returns:
+        dict: A dictionary with keys 'success' (bool) and 'message' (str).
+              If successful, 'message' includes the ID of the newly inserted row.
+    """
+    if not data:
+        return {"success": False, "message": "No data provided for insertion."}
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    columns = ", ".join(data.keys())
+    placeholders = ", ".join(["?" for _ in data])
+    values = tuple(data.values())
+
+    query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+    try:
+        cursor.execute(query, values)
+        conn.commit()
+        last_row_id = cursor.lastrowid
+        return {
+            "success": True,
+            "message": f"Data inserted successfully. Row ID: {last_row_id}",
+            "row_id": last_row_id,
+        }
+    except sqlite3.Error as e:
+        conn.rollback()  # Roll back changes on error
+        return {
+            "success": False,
+            "message": f"Error inserting data into table '{table_name}': {e}",
+        }
+    finally:
+        conn.close()
