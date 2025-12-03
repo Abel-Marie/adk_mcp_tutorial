@@ -28,3 +28,12 @@ logging.basicConfig(
         logging.FileHandler(LOG_FILE_PATH, mode="w"),
     ],
 )
+
+DATABASE_PATH = os.path.join(os.path.dirname(__file__), "database.db")
+
+
+# --- Database Utility Functions ---
+def get_db_connection():
+    conn = sqlite3.connect(DATABASE_PATH)
+    conn.row_factory = sqlite3.Row  # To access columns by name
+    return conn
