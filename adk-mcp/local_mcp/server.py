@@ -82,3 +82,30 @@ def get_table_schema(table_name: str) -> dict:
 
     columns = [{"name": row["name"], "type": row["type"]} for row in schema_info]
     return {"table_name": table_name, "columns": columns}
+
+
+def query_db_table(table_name: str, columns: str, condition: str) -> list[dict]:
+    """Queries a table with an optional condition.
+
+    Args:
+        table_name: The name of the table to query.
+        columns: Comma-separated list of columns to retrieve (e.g., "id, name"). Defaults to "*".
+        condition: Optional SQL WHERE clause condition (e.g., "id = 1" or "completed = 0").
+    Returns:
+        A list of dictionaries, where each dictionary represents a row.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    query = f"SELECT {columns} FROM {table_name}"
+    if condition:
+        query += f" WHERE {condition}"
+    query += ";"
+
+    try:
+        cursor.execute(query)
+        results = [dict(row) for row in cursor.fetchall()]
+    except sqlite3.Error as e:
+        conn.close()
+        raise ValueError(f"Error querying table '{table_name}': {e}")
+    conn.close()
+    return results
